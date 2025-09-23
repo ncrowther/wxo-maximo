@@ -9,7 +9,7 @@ starter_prompts:
   - id: prompt_id_1
     title: Show breached work orders
     subtitle: Plot breached work orders
-    prompt: Show breached work order
+    prompt: show a pie of breached work orders and work orders completed on time
     state: active
   - id: prompt_id_2
     title: Show all work orders

@@ -49,11 +49,12 @@ https://developer.watson-orchestrate.ibm.com/getting_started/installing
    orchestrate agents import -f agents/wxo-graph-agent.yaml
    ```
 
-### Run the Image server Locally
+### Set Image server URL
 
-The image server is used to display charts in WXO.  To run the FastAPI image server locally download the repo:
+The image server is used to display charts in WXO.  To run the  image server locally download the repo:
+https://github.com/ncrowther/wxo-image-server
 
-1. Run the API server
+1. Run the wxo-image-server
 
 2. Use VSC to expose the port (8000) as public
 
