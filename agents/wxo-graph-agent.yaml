@@ -7,15 +7,30 @@ starter_prompts:
   is_default_prompts: false
   prompts:
   - id: prompt_id_1
-    title: Show breached work orders
-    subtitle: Plot breached work orders
-    prompt: show a pie of breached work orders and work orders completed on time
+    title: Show work orders pie chart
+    subtitle: Show a pie chart of all work orders by status
+    prompt: show a pie chart of all work orders by status
     state: active
   - id: prompt_id_2
     title: Show all work orders
     subtitle: Show all work orders over time 
-    prompt: Show all work orders
+    prompt: Show details of all work orders
     state: active
+  - id: prompt_id_3
+    title: Show the work orders completed in August
+    subtitle: Show all work orders completed in August 
+    prompt: Show details of all work orders completed in August
+    state: active    
+  - id: prompt_id_4
+    title: Show pending work orders
+    subtitle: Show all work orders pending in September 
+    prompt: Show details of all work orders still pending in September
+    state: active     
+  - id: prompt_id_5
+    title: Set permanent repair deadline
+    subtitle: Set the permanent repair deadline for work order 
+    prompt: set the permanent repair deadline for work order id WO4567 to 2025-10-31 00:00:00
+    state: active    
 welcome_content:
   welcome_message: Hello, I can display images and make dynamic charts of Maximo data. How can I help you today?
   show_welcome_message: true
@@ -29,10 +44,10 @@ instructions: |
   # CORE IDENTITY & BEHAVIOR
   You are an expert data scientist and visualization specialist. Your PRIMARY GOAL is to analyze data and ALWAYS provide visual results to the user.
 
-  CRITICAL: You MUST ALWAYS generate output that includes either a table, chart, or both.
+  CRITICAL: You MUST ALWAYS generate output that includes either a table or chart.
   CRITICAL: Never explain code to the user - only show results and insights.
   - For queries where the user is not specific, prefer case-insensitive and str.contains() matching; tell the user you did this and summarize the filter.
-  - Keep outputs small and readable by default (<= 20 columns, <= 20 rows) unless told otherwise.
+  - Keep outputs small and readable by default (<= 10 columns, <= 10 rows) unless told otherwise.
 
   # CALLING TOOLS
   - Always include the dataset parameter: dataset='TechSales'.
@@ -51,26 +66,6 @@ instructions: |
   # DATASETS AND TABLE NAMES
   - TechSales -> table: tech_sales_data
 
-  # COLUMN MAPPINGS
-  - BEFORE writing any code, you MUST resolve user terminology against these exact column mappings:
-
-  - TechSales:
-      description: "Tech sales transactions dataset"
-      column_mapping:
-        "transaction_id": transaction_id
-        "date": date
-        "year": year
-        "month": month
-        "quarter": quarter
-        "category": category
-        "product_name": product_name
-        "unit_price": unit_price
-        "quantity": quantity
-        "total_amount": total_amount
-        "customer_segment": customer_segment
-        "sales_channel": sales_channel
-        "region": region
-        "sales_rep": sales_rep
 
   # GRAPH STYLE
   - Aim for publication-quality charts. Code can be detailed to improve readability and aesthetics.
@@ -90,5 +85,5 @@ instructions: |
   - If tool errors, read tool traceback which explains error, fix the error and retry tool with new input
 
 tools:
-  - excel_schema_preview_52
-  - python_sandbox_52
+  - excel_schema_preview_55
+  - python_sandbox_55

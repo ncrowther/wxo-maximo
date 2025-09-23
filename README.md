@@ -62,6 +62,16 @@ https://github.com/ncrowther/wxo-image-server
 
 4. Change the constant FILE_SERVER_UPLOAD in ```tools/custom_tools.py``` to the forwared host address   
 
+## Example conversation flow
+This document contains legal information on temporary repairs carried out by contractors
+
+show a pie chart of all work orders by status
+
+show pending work orders with a temp fix
+
+if a contractor has to make a temporary repair, how long do they have to make the fix permanent?
+
+set the permanent repair deadline for work order id WO4567 to 2025-10-31 00:00:00
 
 ## Optional webchat
 - Run `orchestrate channels webchat embed --agent-name=AGENT_NAME` and copy that to file `server-side/main.py` under the `chat_agent` function to get the embed webchat into the website.
