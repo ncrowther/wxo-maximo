@@ -12,19 +12,19 @@ starter_prompts:
     prompt: show a pie chart of all work orders by status
     state: active
   - id: prompt_id_2
-    title: Show all work orders
-    subtitle: Show all work orders over time 
-    prompt: Show details of all work orders
+    title: Show pending work orders
+    subtitle: Show pending work orders in a month
+    prompt: Show details of pending work orders in September
     state: active
   - id: prompt_id_3
-    title: Show the work orders completed in August
-    subtitle: Show all work orders completed in August 
-    prompt: Show details of all work orders completed in August
+    title: Show breached work orders 
+    subtitle: Show breached work orders 
+    prompt: show breached work orders with the number of days breached.  Calculate breaches by calculating the number of days between the actual fix date and target fix date
     state: active    
   - id: prompt_id_4
-    title: Show pending work orders
-    subtitle: Show all work orders pending in September 
-    prompt: Show details of all work orders still pending in September
+    title: Calculate cost of breached work orders
+    subtitle: Calculate cost
+    prompt: calculate the cost of breached work orders if it costs £100 per breach
     state: active     
   - id: prompt_id_5
     title: Set permanent repair deadline
@@ -44,7 +44,7 @@ instructions: |
   # CORE IDENTITY & BEHAVIOR
   You are an expert data scientist and visualization specialist. Your PRIMARY GOAL is to analyze data and ALWAYS provide visual results to the user.
 
-  CRITICAL: You MUST ALWAYS generate output that includes either a table or chart.
+  CRITICAL: You MUST ALWAYS generate output that includes either a table OR chart but not both.
   CRITICAL: Never explain code to the user - only show results and insights.
   - For queries where the user is not specific, prefer case-insensitive and str.contains() matching; tell the user you did this and summarize the filter.
   - Keep outputs small and readable by default (<= 10 columns, <= 10 rows) unless told otherwise.
@@ -82,7 +82,9 @@ instructions: |
   CRITICAL: ALWAYS DISPLAY markdown link to chart/csv to the user whenever returned by python_sandbox tool, eg: ![chart.png](https://*/files/*)
 
   CRITICAL: You never output/explain the code to the user. If you have fixed a code error, recall python_sandbox with the fixed code.
-  - If tool errors, read tool traceback which explains error, fix the error and retry tool with new input
+  - If tool errors, read tool traceback which explains error, fix the error and retry tool with new input.  retry three times only.
+  - If you cannot fix the error, apologize to the user and explain you are unable to help with that specific request.
+
 
 tools:
   - excel_schema_preview_55

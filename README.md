@@ -65,13 +65,26 @@ https://github.com/ncrowther/wxo-image-server
 ## Example conversation flow
 This document contains legal information on temporary repairs carried out by contractors
 
+show pending work orders 
+
 show a pie chart of all work orders by status
 
-show pending work orders with a temp fix
+show breached work orders with the number of days breached.  Calculate breaches by calculating the number of days between the actual fix date and target fix date
+
+show the table as a bar chart
+
+
+show a bar chart with work order on the x axis and days to fix on the y axis. Label the y axis DAYS
+
+show a chart with work order on the x axis and actual fix date and target fix date on the y axis. Label the y axis DAYS
+
+show a chart with breached work order on the x axis and breached days on the y axis. Label the y axis "days". show breaches as positive numbers. set the title to "Breaches"
 
 if a contractor has to make a temporary repair, how long do they have to make the fix permanent?
 
 set the permanent repair deadline for work order id WO4567 to 2025-10-31 00:00:00
+
+set the actual fix date work order id WO6322 to 2025-10-31 00:00:00 and its status to COMPLETED
 
 ## Optional webchat
 - Run `orchestrate channels webchat embed --agent-name=AGENT_NAME` and copy that to file `server-side/main.py` under the `chat_agent` function to get the embed webchat into the website.

@@ -8,7 +8,7 @@ def _load_df() -> pd.DataFrame:
     """
     
     MAXIMO_TEST_DATA = u"""work_order,sla,status,report_date,target_fix_date,actual_fix_date,permanent_repair_deadline,work_description,
-    WO8734,S1,COMPLETED,14/09/2025,20/09/2025,18/09/2025,,Replace air filter,
+    WO8734,S1,COMPLETED,14/09/2025,20/09/2025,28/09/2025,,Replace air filter,
     WO4534,S2,PENDING,13/09/2025,15/09/2025,,,Fix leaking pipe. Temporary fix applied,
     WO3431,S3,COMPLETED,11/09/2025,12/09/2025,11/09/2025,,Repair broken window,
     WO6454,S5,COMPLETED,10/09/2025,14/09/2025,13/09/2025,,Service HVAC system,
@@ -68,6 +68,7 @@ plt.tight_layout()
 
 # Save the result
 result = plt.gcf()
+
 
 
 # <<<<<<<<
