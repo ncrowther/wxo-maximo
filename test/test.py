@@ -55,21 +55,26 @@ df_TechSales = _load_df()
 ####### INSERT GENERATED CODE BELOW #######
 #  >>>>>>>>
 
+import pandas as pd
 import matplotlib.pyplot as plt
 
-# Group by 'status' and count the number of work orders
-status_counts = df_TechSales['status'].value_counts()
+# Calculate the number of days breached
+df_TechSales['Days Breached'] = (pd.to_datetime(df_TechSales['actual_fix_date']) - pd.to_datetime(df_TechSales['target_fix_date'])).dt.days
 
-# Create a pie chart
-plt.figure(figsize=(8, 8))
-plt.pie(status_counts, labels=status_counts.index, autopct='%1.1f%%', startangle=140)
-plt.title('Work Orders by Status')
+# Filter for breached work orders
+breached_work_orders = df_TechSales[df_TechSales['Days Breached'] > 0]
+
+# Plot the number of days breached
+plt.figure(figsize=(10, 6))
+plt.bar(breached_work_orders['work_order'], breached_work_orders['Days Breached'], color='skyblue')
+plt.xlabel('Work Order')
+plt.ylabel('Days Breached')
+plt.title('Breached Work Orders with Days Breached')
+plt.xticks(rotation=90)
 plt.tight_layout()
 
-# Save the result
-result = plt.gcf()
-
-
+# Set the result
+result = breached_work_orders[['work_order', 'Days Breached', 'sla']]
 
 # <<<<<<<<
 

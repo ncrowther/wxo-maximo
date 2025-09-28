@@ -73,6 +73,9 @@ show breached work orders with the number of days breached.  Calculate breaches 
 
 show the table as a bar chart
 
+what is the sla penalty for S3
+
+calculate sla penalty for work order WO6322
 
 show a bar chart with work order on the x axis and days to fix on the y axis. Label the y axis DAYS
 
@@ -80,7 +83,7 @@ show a chart with work order on the x axis and actual fix date and target fix da
 
 show a chart with breached work order on the x axis and breached days on the y axis. Label the y axis "days". show breaches as positive numbers. set the title to "Breaches"
 
-if a contractor has to make a temporary repair, how long do they have to make the fix permanent?
+Our maintenance contractor has to make a temporary repair, according to the contract how long do they have to make the fix permanent?
 
 set the permanent repair deadline for work order id WO4567 to 2025-10-31 00:00:00
 
