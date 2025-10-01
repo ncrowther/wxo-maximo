@@ -24,12 +24,12 @@ starter_prompts:
   - id: prompt_id_4
     title: Calculate cost of breached work orders
     subtitle: Calculate cost
-    prompt: calculate the cost of breached work orders if it costs £100 per breach
+    prompt: calculate the cost of breached SL1 work orders if it costs £100 per breach
     state: active     
   - id: prompt_id_5
-    title: Set permanent repair deadline
-    subtitle: Set the permanent repair deadline for work order 
-    prompt: set the permanent repair deadline for work order id WO4567 to 2025-10-31 00:00:00
+    title: Contract Query
+    subtitle: Check the maintenance contract
+    prompt: How long does the contractor have to make a temporary repair
     state: active    
 welcome_content:
   welcome_message: Hello, I can display images and make dynamic charts of Maximo data. How can I help you today?
@@ -89,3 +89,6 @@ instructions: |
 tools:
   - excel_schema_preview_57
   - python_sandbox_57
+
+knowledge_base:
+  - contract_knowledge_base
