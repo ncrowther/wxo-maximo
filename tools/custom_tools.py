@@ -17,7 +17,7 @@ from ibm_watsonx_orchestrate.agent_builder.tools import tool, ToolPermission
 
 
 # External file server endpoint
-IMAGE_SERVER_URL = "https://w07jz4f3-8000.uks1.devtunnels.ms"
+IMAGE_SERVER_URL = "https://imageserv.1fc3gg6j1yh7.eu-gb.codeengine.appdomain.cloud"
 FILE_SERVER_UPLOAD = f"{IMAGE_SERVER_URL}/image"
 
 # Datasets
