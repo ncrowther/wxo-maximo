@@ -2,33 +2,37 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import io
 
-def _load_df() -> pd.DataFrame:
+COS_BASE_URL = "https://asksow-data.s3.us-east.cloud-object-storage.appdomain.cloud"
+CSV_DATA = f"{COS_BASE_URL}/workorders2.csv"
+
+# Dataset
+DATASET_SPECS = {
+    "TechSales": {
+        "url": CSV_DATA,
+        "description": "Tech sales dataset",
+        "table_name": "tech_sales_data",
+    }
+}
+
+# Helpers functions
+def _get_dataset_spec(dataset: str) -> dict:
+    ds = (dataset or "").strip()
+    if ds not in DATASET_SPECS:
+        raise ValueError(
+            f"Unknown dataset '{dataset}'. Expected one of: {', '.join(DATASET_SPECS.keys())}."
+        )
+    return DATASET_SPECS[ds]
+
+def _load_df(dataset: str = "TechSales") -> pd.DataFrame:
     """Load the selected dataset as a DataFrame.
 
+    Args:
+        dataset: One of 'TechSales'.
     """
-    
-    MAXIMO_TEST_DATA = u"""work_order,sla,status,report_date,target_fix_date,actual_fix_date,permanent_repair_deadline,work_description,
-    WO8734,S1,COMPLETED,14/09/2025,20/09/2025,28/09/2025,,Replace air filter,
-    WO4534,S2,PENDING,13/09/2025,15/09/2025,,,Fix leaking pipe. Temporary fix applied,
-    WO3431,S3,COMPLETED,11/09/2025,12/09/2025,11/09/2025,,Repair broken window,
-    WO6454,S5,COMPLETED,10/09/2025,14/09/2025,13/09/2025,,Service HVAC system,
-    WO7342,S1,COMPLETED,09/09/2025,10/09/2025,10/09/2025,,Replace light bulbs,
-    WO6353,S4,COMPLETED,08/09/2025,09/09/2025,10/09/2025,,Fix door lock,
-    WO6341,S5,COMPLETED,07/09/2025,08/09/2025,07/09/2025,,Repair roof leak,
-    WO6322,S1,PENDING,06/09/2025,07/09/2025,,,Service elevator,
-    WO8453,S4,COMPLETED,05/09/2025,06/09/2025,05/09/2025,,Replace carpet,
-    WO6327,S5,COMPLETED,04/09/2025,05/09/2025,04/09/2025,,Fix plumbing issue,
-    WO3463,S1,PENDING,03/09/2025,04/09/2025,,,Repair parking lot,
-    WO3432,S3,COMPLETED,02/09/2025,03/09/2025,02/09/2025,,Service fire alarm system,
-    WO4567,S3,PENDING,01/09/2025,02/09/2025,,,Replace ceiling tiles. Temporary fix applied,
-    WO4533,S1,COMPLETED,31/08/2025,01/09/2025,31/08/2025,,Fix exterior lighting,
-    WO6233,S2,COMPLETED,30/08/2025,31/08/2025,02/09/2025,,Repair sidewalk,
-    WO6234,S4,PENDING,29/08/2025,30/08/2025,,,Service sprinkler system,
-    WO6235,S5,COMPLETED,28/08/2025,29/08/2025,28/08/2025,,Replace HVAC filters,
-    """
-        
+    spec = _get_dataset_spec(dataset)
+    url = spec.get("url")
     try:
-        df = pd.read_csv(io.StringIO(MAXIMO_TEST_DATA), index_col=-1, sep=r",\s*", engine='python')
+        df = pd.read_csv(url)
         df.columns = [str(c).strip() for c in df.columns]
     except Exception:
         # Optional, add fallback?: eg try local Excel workbook
@@ -47,7 +51,7 @@ def _load_df() -> pd.DataFrame:
     # csv_filename = f"{dataset}.csv"
     # df.to_csv(csv_filename, index=False)
 
-    return df 
+    return df
 
 ####### Main code starts here ######
 df_TechSales = _load_df()
@@ -55,26 +59,20 @@ df_TechSales = _load_df()
 ####### INSERT GENERATED CODE BELOW #######
 #  >>>>>>>>
 
-import pandas as pd
 import matplotlib.pyplot as plt
 
-# Calculate the number of days breached
-df_TechSales['Days Breached'] = (pd.to_datetime(df_TechSales['actual_fix_date']) - pd.to_datetime(df_TechSales['target_fix_date'])).dt.days
+# Group by 'status' and count the number of work orders
+status_counts = df_TechSales['status'].value_counts()
 
-# Filter for breached work orders
-breached_work_orders = df_TechSales[df_TechSales['Days Breached'] > 0]
-
-# Plot the number of days breached
-plt.figure(figsize=(10, 6))
-plt.bar(breached_work_orders['work_order'], breached_work_orders['Days Breached'], color='skyblue')
-plt.xlabel('Work Order')
-plt.ylabel('Days Breached')
-plt.title('Breached Work Orders with Days Breached')
-plt.xticks(rotation=90)
+# Create a pie chart
+plt.figure(figsize=(8, 8))
+plt.pie(status_counts, labels=status_counts.index, autopct='%1.1f%%', startangle=140)
+plt.title('Work Orders by Status')
 plt.tight_layout()
 
-# Set the result
-result = breached_work_orders[['work_order', 'Days Breached', 'sla']]
+# Save the result
+result = plt.gcf()
+
 
 # <<<<<<<<
 

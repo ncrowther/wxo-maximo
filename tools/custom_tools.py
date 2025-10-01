@@ -20,15 +20,17 @@ from ibm_watsonx_orchestrate.agent_builder.tools import tool, ToolPermission
 IMAGE_SERVER_URL = "https://imageserv.1fc3gg6j1yh7.eu-gb.codeengine.appdomain.cloud"
 FILE_SERVER_UPLOAD = f"{IMAGE_SERVER_URL}/image"
 
-# Datasets
+COS_BASE_URL = "https://asksow-data.s3.us-east.cloud-object-storage.appdomain.cloud"
+CSV_DATA = f"{COS_BASE_URL}/workorders2.csv"
+
+# Dataset
 DATASET_SPECS = {
     "TechSales": {
-        "file": "tech_sales_data.csv",
+        "url": CSV_DATA,
         "description": "Tech sales dataset",
         "table_name": "tech_sales_data",
     }
 }
-
 
 # Helpers functions
 def _get_dataset_spec(dataset: str) -> dict:
@@ -45,56 +47,10 @@ def _load_df(dataset: str = "TechSales") -> pd.DataFrame:
     Args:
         dataset: One of 'TechSales'.
     """
-    #spec = _get_dataset_spec(dataset)
-    #url = spec.get("url")
-    
-
-    
-    #TESTDATA = u"""\
-    #transaction_id,date,year,month,quarter,category,product_name,unit_price,quantity,total_amount,customer_segment,sales_channel,region,sales_rep
-    #TXN-3132FC7F,2023-04-21,2023,4,Q2,Smartphones,Samsung Galaxy S24,847.98,1,847.98,Consumer,Online,Latin America,
-    #TXN-3CECF7D2,2022-11-09,2022,11,Q4,Smartphones,iPhone 15 Pro,1042.73,4,4170.92,Consumer,Retail Store,Latin America
-    #"""
-    
-    BANKING_TEST_DATA = u"""id,date,amount,vendor,category,		
-    1,14/09/2025,2.88,LIDL,FOOD,
-    2,13/09/2025,17.08,LIDL,FOOD,
-    3,11/09/2025,36.00,STATION,TRAVEL,
-    4,10/09/2025,237.00,COUNCIL,UTILITY,
-    5,09/09/2025,400.00,MARMOT,VACATION,
-    6,08/09/2025,12.00,AMAZON,SHOPPING,
-    7,07/09/2025,15.00,AMAZON,SHOPPING,
-    8,06/09/2025,5.00,TESCO,FOOD,
-    9,05/09/2025,3.50,TESCO,FOOD,
-    10,04/09/2025,7.00,TESCO,FOOD,
-    11,03/09/2025,50.00,TRAIN,TRAVEL,
-    12,02/09/2025,30.00,TRAIN,TRAVEL,
-    13,01/09/2025,20.00,TRAIN,TRAVEL,
-    14,31/08/2025,100.00,RENT,UTILITY,
-    15,30/08/2025,60.00,GAS,UTILITY,
-    """
-    
-    MAXIMO_TEST_DATA = u"""work_order,sla,status,report_date,target_fix_date,actual_fix_date,work_description
-WO8734,S1,COMPLETED,14/09/2025,20/09/2025,20/09/2025,Replace air filter
-WO4534,S2,PENDING,13/09/2025,15/09/2025,,Fix leaking pipe. Temporary fix applied
-WO3431,S3,COMPLETED,11/09/2025,12/09/2025,12/09/2025,Repair broken window
-WO6454,S5,COMPLETED,10/09/2025,14/09/2025,17/09/2025,Service HVAC system
-WO7342,S1,COMPLETED,09/09/2025,10/09/2025,13/09/2025,Replace light bulbs
-WO6353,S4,COMPLETED,08/09/2025,09/09/2025,10/09/2025,Fix door lock
-WO6341,S5,COMPLETED,07/09/2025,08/09/2025,08/09/2025,Repair roof leak
-WO6322,S1,PENDING,06/09/2025,07/09/2025,,Service elevator
-WO8453,S4,COMPLETED,05/09/2025,06/09/2025,14/09/2025,Replace carpet
-WO6327,S5,COMPLETED,04/09/2025,05/09/2025,06/09/2025,Fix plumbing issue
-WO3463,S1,PENDING,03/09/2025,04/09/2025,,Repair parking lot
-WO3432,S3,COMPLETED,02/09/2025,03/09/2025,03/09/2025,Service fire alarm system
-WO4567,S3,PENDING,01/09/2025,02/09/2025,,Replace ceiling tiles. Temporary fix applied
-WO6233,S2,COMPLETED,30/08/2025,31/08/2025,02/09/2025,Repair sidewalk
-WO6234,S4,PENDING,29/08/2025,30/08/2025,,Service sprinkler system
-WO6235,S5,COMPLETED,28/08/2025,29/08/2025,29/08/2025,Replace HVAC filters
-    """
-        
+    spec = _get_dataset_spec(dataset)
+    url = spec.get("url")
     try:
-        df = pd.read_csv(io.StringIO(MAXIMO_TEST_DATA), index_col=-1, sep=r",\s*", engine='python')
+        df = pd.read_csv(url)
         df.columns = [str(c).strip() for c in df.columns]
     except Exception:
         # Optional, add fallback?: eg try local Excel workbook
@@ -107,6 +63,11 @@ WO6235,S5,COMPLETED,28/08/2025,29/08/2025,29/08/2025,Replace HVAC filters
                 df[col] = pd.to_datetime(df[col], errors="ignore")
             except Exception:
                 pass
+
+    # Save the DataFrame as CSV to working directory for agent convenience - so doesnt have to download it everytime
+    # You need to change agent permissions or it will error
+    # csv_filename = f"{dataset}.csv"
+    # df.to_csv(csv_filename, index=False)
 
     return df
 
@@ -129,11 +90,7 @@ def _df_to_markdown_with_csv(df: pd.DataFrame, limit: int = 20):
 
 def _attach_chart_if_any():
     """Capture the current matplotlib figure as PNG (base64) if axes exist."""
-    
-    #plt.figure(figsize=(100,60))
-        
     fig = plt.gcf()
-
     if fig and fig.get_axes():
         buf = io.BytesIO()
         fig.savefig(buf, format="png", bbox_inches="tight", dpi=160)
@@ -142,9 +99,7 @@ def _attach_chart_if_any():
         b64 = base64.b64encode(buf.read()).decode("utf-8")
         return [{"name": "chart.png", "mimetype": "image/png", "base64": b64}]
     return []
-    
-    
-    
+
 def _upload_bytes_to_file_server(image_bytes) -> str:
     """
     POSTs the file to the server and returns the public URL.
@@ -159,12 +114,11 @@ def _upload_bytes_to_file_server(image_bytes) -> str:
      }
 
     response = requests.request("POST", FILE_SERVER_UPLOAD, headers=headers, json=payload)
-
-    print(response.url)
     
     response.raise_for_status()
     jresponse = response.json()
     return jresponse.get("url", "") # e.g. "https://w07jz4f3-8000.uks1.devtunnels.ms/assets/chart.jpg"
+
 
 def _attachments_to_markdown(att_list: list):
     """
@@ -179,6 +133,7 @@ def _attachments_to_markdown(att_list: list):
             continue
         name = a.get("name") or "file"
         mime = a.get("mimetype") or "application/octet-stream"
+        #data = base64.b64decode(b64)
 
         try:
             url = _upload_bytes_to_file_server(b64)
@@ -203,9 +158,12 @@ def _compose_return(text: str, attachments: list):
     return text
 
 
+
+
+
 # TOOLS
 @tool(
-    name="excel_schema_preview_55",
+    name="excel_schema_preview_57",
     description=(
         "Inspect the selected dataset (TechSales). "
         "Returns dataset key, logical table name, description, row/column counts, full column list with dtypes, and head(5). "
@@ -248,11 +206,11 @@ def _normalize_code(s: str) -> str:
 
 
 @tool(
-    name="python_sandbox_55",
+    name="python_sandbox_57",
     description=(
         "Uses pre-loaded DataFrames and execute Python (pandas/matplotlib) code. "
         "CRITICAL: DONT USE double quote, always single quotes and provide complete code."
-        "CRITICAL: Do not generate code to read read csv file.  Always use 'df_DATASETNAME' format, e.g., 'df_TechSales'. "
+        "Always use 'df_DATASETNAME' format, e.g., 'df_TechSales'. "
         "CRITICAL: Set final output to variable named 'result'. Python code MUST end with result = ..."
         "DataFrames/Series return Markdown previews (<=20 rows); charts/full CSVs are attached as markdown links. "
         "Doesn't write files to disk, captures the current matplotlib figure and auto-upload."
@@ -274,17 +232,29 @@ def python_sandbox(python: str, dataset: str = "TechSales") -> str:
       - If a chart was drawn: attaches chart.png in markdown.
       - On error: returns full error type, message, traceback, and the exact code that ran.
     """
+    dataset_list = [ds.strip() for ds in dataset.split(",")]
     
-    ds = "TechSales"
+    # Validate datasets exists in pre-defined list
+    for ds in dataset_list:
+        if ds not in DATASET_SPECS:
+            return f"Error: Unknown dataset '{ds}'. Available datasets: {', '.join(DATASET_SPECS.keys())}"
     
     # Load datasets
-    dataframe =  _load_df(ds)
- 
+    dataframes = {}
+    for ds in dataset_list:
+        try:
+            dataframes[ds] = _load_df(ds)
+        except Exception as e:
+            return f"Error loading dataset '{ds}': {e}"
+    
     # Create global namespace, it will be passed into exec as variables
     g = {"pd": pd, "np": np, "plt": plt}
     l = {}
     
-    g[f"df_{ds}"] = dataframe
+
+    # Multiple datasets: use df_DATASETNAME format
+    for ds, df_for_ds in dataframes.items():
+        g[f"df_{ds}"] = df_for_ds
     
     plt.show = lambda: None # Override plt.show to do nothing, we dont want it to print Axes(...) - confuses the llm when tool returns it
     try:
@@ -306,18 +276,19 @@ def python_sandbox(python: str, dataset: str = "TechSales") -> str:
         tb = traceback.format_exc()
         
         g_vars = list(g.keys())
-
+        # local_files = "\n".join(os.listdir("."))
         return (
             "Python execution error:\n"
             f"{type(e).__name__}: {e}\n"
             f"Traceback:\n{tb}\n\n"
             "python code used:\n```python\n" + (python or "") + "\n```"
             f"Vars loaded: {g_vars}"
+            # f"Local files: {local_files}"
             "Retry tool call with fixed code"
         )
 
     result = l.get("result", g.get("result", None))
-    attachments =  _attach_chart_if_any()
+    attachments = _attach_chart_if_any()
 
     if result is None and attachments == []: # if there's no table attached, and no plot attached, throw error
         return (
