@@ -16,12 +16,16 @@ warnings.filterwarnings("ignore") # you dont want these in tool outputs
 from ibm_watsonx_orchestrate.agent_builder.tools import tool, ToolPermission
 
 
+# Data set
+DATA_SET = "data.csv"
+COS_BASE_URL = "https://asksow-data.s3.us-east.cloud-object-storage.appdomain.cloud"
+CSV_DATA = f"{COS_BASE_URL}/{DATA_SET}"
+
 # External file server endpoint
 IMAGE_SERVER_URL = "https://imageserv.1fc3gg6j1yh7.eu-gb.codeengine.appdomain.cloud"
-FILE_SERVER_UPLOAD = f"{IMAGE_SERVER_URL}/image"
-
-COS_BASE_URL = "https://asksow-data.s3.us-east.cloud-object-storage.appdomain.cloud"
-CSV_DATA = f"{COS_BASE_URL}/workorders2.csv"
+#IMAGE_SERVER_URL = "https://w07jz4f3-8000.uks1.devtunnels.ms"
+IMAGE_UPLOAD = f"{IMAGE_SERVER_URL}/image"
+CSV_UPLOAD = f"{IMAGE_SERVER_URL}/csv"
 
 # Dataset
 DATASET_SPECS = {
@@ -113,7 +117,26 @@ def _upload_bytes_to_file_server(image_bytes) -> str:
     'Content-Type': 'application/json',
      }
 
-    response = requests.request("POST", FILE_SERVER_UPLOAD, headers=headers, json=payload)
+    response = requests.request("POST", IMAGE_UPLOAD, headers=headers, json=payload)
+    
+    response.raise_for_status()
+    jresponse = response.json()
+    return jresponse.get("url", "") # e.g. "https://w07jz4f3-8000.uks1.devtunnels.ms/assets/chart.jpg"
+
+def _upload_csv_to_server(csv_data) -> str:
+    """
+    POSTs the file to the server and returns the public URL.
+    Expects the  server to respond with JSON {"url": "..."}.
+    """
+
+    payload = {
+    "data": csv_data  }
+    
+    headers = {
+    'Content-Type': 'application/json',
+     }
+
+    response = requests.request("POST", CSV_UPLOAD, headers=headers, json=payload)
     
     response.raise_for_status()
     jresponse = response.json()
@@ -302,3 +325,17 @@ def python_sandbox(python: str, dataset: str = "TechSales") -> str:
         return _compose_return(text, attachments)
 
     return _compose_return(str(result), attachments)
+
+
+@tool(permission=ToolPermission.READ_ONLY)
+def upload_csv_file(document: bytes) -> str:
+    """
+    Uploads a document and returns the location as a URL
+    :returns: the document URL
+    """
+    
+    csv = document.decode("ascii")
+    
+    url = _upload_csv_to_server(csv)
+        
+    return url

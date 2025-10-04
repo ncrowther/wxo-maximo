@@ -2,8 +2,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import io
 
+DATA_SET = "transactions_202510021134.csv"
 COS_BASE_URL = "https://asksow-data.s3.us-east.cloud-object-storage.appdomain.cloud"
-CSV_DATA = f"{COS_BASE_URL}/workorders2.csv"
+CSV_DATA = f"{COS_BASE_URL}/{DATA_SET}"
+
+#https://imageserv.1fc3gg6j1yh7.eu-gb.codeengine.appdomain.cloud/transactions_202510021134.csv
 
 # Dataset
 DATASET_SPECS = {
@@ -61,21 +64,27 @@ df_TechSales = _load_df()
 
 import matplotlib.pyplot as plt
 
-# Group by 'status' and count the number of work orders
-status_counts = df_TechSales['status'].value_counts()
+# Filter the data for OUT direction
+spending_data = df_TechSales[df_TechSales['direction'] == 'OUT']
 
-# Create a pie chart
-plt.figure(figsize=(8, 8))
-plt.pie(status_counts, labels=status_counts.index, autopct='%1.1f%%', startangle=140)
-plt.title('Work Orders by Status')
+# Group by counterparty_name and sum the amounts
+grouped_data = spending_data.groupby('counterparty_name')['amount'].sum()
+
+# Plot the data
+plt.figure(figsize=(10, 6))
+grouped_data.plot(kind='bar', color='skyblue')
+
+# Add titles and labels
+plt.title('Spending by Counterparty')
+plt.xlabel('Counterparty')
+plt.ylabel('Amount Spent')
+plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 
-# Save the result
+# Save the plot
 result = plt.gcf()
-
-
 # <<<<<<<<
 
 ######## KEEP THE LINE BELOW TO DISPLAY THE CHART ########
-print(result)
+#print(result)
 plt.show()
