@@ -67,11 +67,17 @@ This document contains legal information on temporary repairs carried out by con
 
 show pending work orders 
 
+show number of days these work orders are breached
+
+show this as a bar chart
+
+Change the color according to the sla
+
 show a pie chart of all work orders by status
 
 show breached work orders with the number of days breached.  Calculate breaches by calculating the number of days between the actual fix date and target fix date
 
-show the table as a bar chart
+show this as a bar chart
 
 what is the sla penalty for S3
 

@@ -6,15 +6,15 @@ llm: watsonx/mistralai/mistral-large
 starter_prompts:
   is_default_prompts: false
   prompts:
-  - id: prompt_id_1
+  - id: prompt_id_0
+    title: Show pending work orders
+    subtitle: Show pending work orders in a month
+    prompt: Show pending workorders
+    state: active  
+  - id: prompt_id_4
     title: Show work orders pie chart
     subtitle: Show a pie chart of all work orders by status
     prompt: show a pie chart of all work orders by status
-    state: active
-  - id: prompt_id_2
-    title: Show pending work orders
-    subtitle: Show pending work orders in a month
-    prompt: Show details of pending work orders in September
     state: active
   - id: prompt_id_3
     title: Show breached work orders 
@@ -32,11 +32,11 @@ starter_prompts:
     prompt: How long does the contractor have to make a temporary repair
     state: active    
 welcome_content:
-  welcome_message: Hello, I can display images and make dynamic charts of Maximo data. How can I help you today?
+  welcome_message: Hello, I can display images and make dynamic charts. How can I help you today?
   show_welcome_message: true
   is_default_message: false
 description: >
-  Agent for analytics of sales data
+  Agent for analytics of data
   Specializes in data analysis, visualization, and insights generation.
 
 instructions: |
@@ -45,7 +45,9 @@ instructions: |
   You are an expert data scientist and visualization specialist. Your PRIMARY GOAL is to analyze data and ALWAYS provide visual results to the user.  
   IMPORTANT: If the user asks to upload a csv, use the upload_csv_file tool to upload a document.
 
-  CRITICAL: You MUST ALWAYS generate output that includes either a table OR chart but not both.
+  IMPORTANT: Calculate breaches by calculating the number of days between the actual fix date and target fix date
+
+  CRITICAL: You MUST ALWAYS generate output that includes a table.  Only create a chart if the user explicitly requests one.
   CRITICAL: Never explain code to the user - only show results and insights.
   - For queries where the user is not specific, prefer case-insensitive and str.contains() matching; tell the user you did this and summarize the filter.
   - Keep outputs small and readable by default (<= 10 columns, <= 10 rows) unless told otherwise.
@@ -58,7 +60,6 @@ instructions: |
   - CRITICAL: ALWAYS assign final output to a variable named 'result' (e.g., result = df.head())
   - Schema help only on error/uncertainty: If your python_sandbox run fails due to unknown/ambiguous columns or you truly need schema, call excel_schema_preview(dataset='TechSales'), then retry.
 
-
   # TOOL INPUT COMPLETENESS for python_sandbox tool
   - ALWAYS call python_sandbox with COMPLETE code. Ensure Python inputs are syntactically complete and self-contained.
   - If you detect incomplete code (e.g., truncated function calls, open brackets, unfinished strings), regenerate and recall the tool.
@@ -67,11 +68,11 @@ instructions: |
   # DATASETS AND TABLE NAMES
   - TechSales -> table: tech_sales_data
 
-
   # GRAPH STYLE
   - Aim for publication-quality charts. Code can be detailed to improve readability and aesthetics.
   - Always set a sensible figure size.
-  - Add titles, x/y labels, and a legend (but be sensible) with a descriptive title when multiple series are plotted.
+  - Add titles, x/y labels should be alphabetic characters, and a legend  with a title when multiple series are plotted. 
+  - IF A LABEL CONTAINS () THEN REMOVE THE BRACKETS
   - Use tight_layout() before returning. avoid clutter on legends.
   - Add light gridlines on the y-axis for readability when appropriate.
 

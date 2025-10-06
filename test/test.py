@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import io
 
-DATA_SET = "transactions_202510021134.csv"
+DATA_SET = "data.csv"
 COS_BASE_URL = "https://asksow-data.s3.us-east.cloud-object-storage.appdomain.cloud"
 CSV_DATA = f"{COS_BASE_URL}/{DATA_SET}"
 
@@ -62,29 +62,22 @@ df_TechSales = _load_df()
 ####### INSERT GENERATED CODE BELOW #######
 #  >>>>>>>>
 
-import matplotlib.pyplot as plt
+import pandas as pd
 
-# Filter the data for OUT direction
-spending_data = df_TechSales[df_TechSales['direction'] == 'OUT']
+# Filter pending work orders
+pending_work_orders = df_TechSales[df_TechSales['status'] == 'PENDING']
 
-# Group by counterparty_name and sum the amounts
-grouped_data = spending_data.groupby('counterparty_name')['amount'].sum()
+# Calculate breaches
+pending_work_orders['Breach Days'] = (pd.to_datetime('today') - pending_work_orders['target_fix_date']).dt.days
 
-# Plot the data
-plt.figure(figsize=(10, 6))
-grouped_data.plot(kind='bar', color='skyblue')
+# Filter breached work orders
+breached_work_orders = pending_work_orders[pending_work_orders['Breach Days'] > 0]
 
-# Add titles and labels
-plt.title('Spending by Counterparty')
-plt.xlabel('Counterparty')
-plt.ylabel('Amount Spent')
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.tight_layout()
+# Set the result
+result = breached_work_orders[['work_order', 'Breach Days']]
 
-# Save the plot
-result = plt.gcf()
 # <<<<<<<<
 
 ######## KEEP THE LINE BELOW TO DISPLAY THE CHART ########
-#print(result)
+print(result)
 plt.show()
