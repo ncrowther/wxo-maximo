@@ -62,7 +62,8 @@ https://github.com/ncrowther/wxo-image-server
 
 4. Change the constant FILE_SERVER_UPLOAD in ```tools/custom_tools.py``` to the forwared host address   
 
-## Example conversation flow
+## Example conversation flow with data agent
+
 This document contains legal information on temporary repairs carried out by contractors
 
 show pending work orders 
@@ -72,6 +73,16 @@ show number of days these work orders are breached
 show this as a bar chart
 
 Change the color according to the sla
+
+calculate cost of WO6234 if the cost of one day breach is £100
+
+calculate the cost of WO4534 if the cost of one hour breach is £50
+
+## Example conversation flow with contract agent
+
+Our maintenance contatctor has had to make a temporary fix.   How long do they have to make the fix permanent?
+
+## More examples
 
 show a pie chart of all work orders by status
 
