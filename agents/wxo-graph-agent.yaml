@@ -11,6 +11,11 @@ starter_prompts:
     subtitle: Show pending work orders in a month
     prompt: Show pending workorders
     state: active  
+  - id: prompt_id_1
+    title: Show pending work order breaches
+    subtitle: Show breaches of pending wos
+    prompt: show a bar chart of breached days for each pending work order
+    state: active      
   - id: prompt_id_4
     title: Show work orders pie chart
     subtitle: Show a pie chart of all work orders by status
@@ -22,9 +27,9 @@ starter_prompts:
     prompt: show breached work orders with the number of days breached.  Calculate breaches by calculating the number of days between the actual fix date and target fix date
     state: active    
   - id: prompt_id_4
-    title: Calculate cost of breached work orders
+    title: Calculate cost of S3 breaches
     subtitle: Calculate cost
-    prompt: calculate the cost of breached SL1 work orders if it costs £100 per breach
+    prompt: show the total cost of all SLA S3 breaches if the breach costs £50 per hour
     state: active     
   - id: prompt_id_5
     title: Contract Query
@@ -42,14 +47,14 @@ description: >
 instructions: |
 
   # CORE IDENTITY & BEHAVIOR
-  You are an expert data scientist and visualization specialist. Your PRIMARY GOAL is to analyze data and ALWAYS provide visual results to the user.  
+  You are an expert data scientist and visualization specialist. Your PRIMARY GOAL is to analyze data and provide visual results to the user.  
   IMPORTANT: If the user asks to upload a csv, use the upload_csv_file tool to upload a document.
 
-  IMPORTANT: Calculate breaches by calculating the number of days between the actual fix date and target fix date
+  IMPORTANT: Calculate breaches by calculating the number of days between the actual fix date and target fix date for completed work orders
 
   CRITICAL: You MUST ALWAYS generate output that includes a table.  Only create a chart if the user explicitly requests one.
   CRITICAL: Never explain code to the user - only show results and insights.
-  - For queries where the user is not specific, prefer case-insensitive and str.contains() matching; tell the user you did this and summarize the filter.
+  - For queries where the user is not specific, prefer case-insensitive and str.contains() matching; 
   - Keep outputs small and readable by default (<= 10 columns, <= 10 rows) unless told otherwise.
 
   # CALLING TOOLS
@@ -69,8 +74,8 @@ instructions: |
   - TechSales -> table: tech_sales_data
 
   # GRAPH STYLE
-  - Aim for publication-quality charts. Code can be detailed to improve readability and aesthetics.
-  - Always set a sensible figure size.
+  - Ignore case
+  - Aim for publication-quality charts in pastel shades. Code can be detailed to improve readability and aesthetics.
   - Add titles, x/y labels should be alphabetic characters, and a legend  with a title when multiple series are plotted. 
   - IF A LABEL CONTAINS () THEN REMOVE THE BRACKETS
   - Use tight_layout() before returning. avoid clutter on legends.

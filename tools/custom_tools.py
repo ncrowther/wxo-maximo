@@ -18,12 +18,12 @@ from ibm_watsonx_orchestrate.agent_builder.tools import tool, ToolPermission
 
 # Data set
 DATA_SET = "data.csv"
-COS_BASE_URL = "https://asksow-data.s3.us-east.cloud-object-storage.appdomain.cloud"
+#COS_BASE_URL = "https://asksow-data.s3.us-east.cloud-object-storage.appdomain.cloud"
+COS_BASE_URL = "https://wxo-maximo-data.s3.us.cloud-object-storage.appdomain.cloud"
 CSV_DATA = f"{COS_BASE_URL}/{DATA_SET}"
 
 # External file server endpoint
 IMAGE_SERVER_URL = "https://imageserv.1fc3gg6j1yh7.eu-gb.codeengine.appdomain.cloud"
-#IMAGE_SERVER_URL = "https://w07jz4f3-8000.uks1.devtunnels.ms"
 IMAGE_UPLOAD = f"{IMAGE_SERVER_URL}/image"
 CSV_UPLOAD = f"{IMAGE_SERVER_URL}/csv"
 
@@ -53,6 +53,7 @@ def _load_df(dataset: str = "TechSales") -> pd.DataFrame:
     """
     spec = _get_dataset_spec(dataset)
     url = spec.get("url")
+
     try:
         df = pd.read_csv(url)
         df.columns = [str(c).strip() for c in df.columns]
