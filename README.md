@@ -62,7 +62,7 @@ https://github.com/ncrowther/wxo-image-server
 
 4. Change the constant FILE_SERVER_UPLOAD in ```tools/custom_tools.py``` to the forwared host address   
 
-## Example conversation flow with data agent
+## Example conversation flow 
 
 This document contains legal information on temporary repairs carried out by contractors
 
@@ -74,7 +74,7 @@ show this as a bar chart
 
 Change the color according to the sla
 
-calculate cost of WO6234 if the cost of one day breach is £100
+calculate cost of WO6234 if the cost of one day breach is £45 per hour
 
 calculate the cost of WO4534 if the cost of one hour breach is £50
 
